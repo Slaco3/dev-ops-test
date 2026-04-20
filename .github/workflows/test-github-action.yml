@@ -22,4 +22,4 @@ jobs:
         with:
           name: build-next
           path: .next
-      - uses: cypress-io/github-action
+      - uses: cypress-io/github-action@v6
