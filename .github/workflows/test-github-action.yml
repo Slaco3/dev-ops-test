@@ -21,7 +21,7 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v6
-      - name : Récupération du cache
+      - name: Récupération du cache
         uses: actions/cache/restore@v5
         with:
           path: |
@@ -29,6 +29,7 @@ jobs:
             .next
             /home/runner/.cache/Cypress
           key: ${{runner.os}}-node-${{hashFiles('**/package-lock.json')}}
+      - run: ls -lah
       - uses: cypress-io/github-action@v7
         with: 
           install: false
