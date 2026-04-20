@@ -33,5 +33,10 @@ jobs:
       - uses: cypress-io/github-action@v7
         with: 
           install: false
-          start: npm run start   
+          start: npm run start  
+      - uses: actions/upload-artifact@v7
+        if: @always
+        with:
+          name: cypress-videos
+          path: cypress/videos
 
