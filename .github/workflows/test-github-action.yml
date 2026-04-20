@@ -4,18 +4,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: ls -lah
       - uses: actions/checkout@v6
-      - run: ls -lah
-      - run: echo "Hello World"
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-next
+          path: .next
 
-  build-2: 
+  test: 
     runs-on: ubuntu-latest
+    needs: build
     steps:
-      - run: ls -lah
-
-  build-3: 
-    runs-on: ubuntu-latest
-    needs: build-2
-    steps:
-      - run: ls -lah
+      - uses: actions/checkout@v6
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-next
+          path: .next
+      - uses: cypress-io/github-action
