@@ -13,7 +13,7 @@ jobs:
           path: |
             node_modules
             .next
-          key: ${{runner.os }}-node-${{hasfiles('**/pacakge-lock.json')}}
+          key: ${{runner.os }}-node-${{hashfiles('**/pacakge-lock.json')}}
 
   test: 
     runs-on: ubuntu-latest
