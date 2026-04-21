@@ -1,6 +1,30 @@
 on: push
 
 jobs:
+
+  deploy:
+    name: Connexion SSH + deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          ls
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          cd dev-ops-test
+          git pull origin main
+          npm install
+          npm run build
+          pm2 restart next-app
+          pm2 list
+
+
   gitleaks:
     name: gitleaks
     runs-on: ubuntu-latest
