@@ -6,54 +6,33 @@ on:
       - 'v*'
 
 
-permissions:
-  contents: read
-  packages: write
-  pull-requests: read
-
-env:
-  IMAGE_NAME: ghcr.io/slaco3/with-cypress-app-test
-
-jobs:
   build-and-push-docker:
-    name: build
     runs-on: ubuntu-latest
-
+    #needs: [lint, test]
+    if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v6
-
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to GitHub Container Registry
+      - uses: actions/checkout@v6
+      - name: Connexion au registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Compute tags
+      - name: Extract metadata (tags, labels) for Docker
         id: meta
-        run: |
-          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            VERSION="${GITHUB_REF#refs/tags/}"
-            echo "tags=${{ env.IMAGE_NAME }}:latest,${{ env.IMAGE_NAME }}:${VERSION}" >> $GITHUB_OUTPUT
-          else
-            echo "tags=${{ env.IMAGE_NAME }}:dev" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Build & push
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ github.repository }}/next
+      - name: Build et push de l'image
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
-          target: next
-          platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-
-
+          labels: ${{ steps.meta.outputs.labels }}
 
   # gitleaks:
   #   name: gitleaks
