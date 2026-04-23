@@ -48,7 +48,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          target: prod
+          target: next
           platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
